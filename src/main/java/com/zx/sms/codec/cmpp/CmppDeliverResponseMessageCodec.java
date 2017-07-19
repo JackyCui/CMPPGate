@@ -3,6 +3,13 @@
  */
 package com.zx.sms.codec.cmpp;
 
+import com.zx.sms.codec.cmpp.msg.CmppDeliverResponseMessage;
+import com.zx.sms.codec.cmpp.msg.Message;
+import com.zx.sms.codec.cmpp.packet.CmppDeliverResponse;
+import com.zx.sms.codec.cmpp.packet.CmppPacketType;
+import com.zx.sms.codec.cmpp.packet.PacketType;
+import com.zx.sms.common.util.DefaultMsgIdUtil;
+import com.zx.sms.common.util.NettyByteBufUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
@@ -10,13 +17,6 @@ import io.netty.handler.codec.MessageToMessageCodec;
 import io.netty.util.ReferenceCountUtil;
 
 import java.util.List;
-
-import com.zx.sms.codec.cmpp.msg.CmppDeliverResponseMessage;
-import com.zx.sms.codec.cmpp.msg.Message;
-import com.zx.sms.codec.cmpp.packet.CmppDeliverResponse;
-import com.zx.sms.codec.cmpp.packet.CmppPacketType;
-import com.zx.sms.codec.cmpp.packet.PacketType;
-import com.zx.sms.common.util.DefaultMsgIdUtil;
 
 /**
  * @author huzorro(huzorro@gmail.com)
@@ -53,7 +53,7 @@ public class CmppDeliverResponseMessageCodec extends MessageToMessageCodec<Messa
 
 		ByteBuf bodyBuffer = Unpooled.wrappedBuffer(msg.getBodyBuffer());
 
-		responseMessage.setMsgId(DefaultMsgIdUtil.bytes2MsgId(bodyBuffer.readBytes(CmppDeliverResponse.MSGID.getLength()).array()));
+		responseMessage.setMsgId(DefaultMsgIdUtil.bytes2MsgId(NettyByteBufUtil.readBytes(bodyBuffer, CmppDeliverResponse.MSGID.getLength())));
 		responseMessage.setResult(bodyBuffer.readUnsignedInt());
 		ReferenceCountUtil.release(bodyBuffer);
 		return responseMessage;

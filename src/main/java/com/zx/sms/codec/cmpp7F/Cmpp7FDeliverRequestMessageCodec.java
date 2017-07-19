@@ -3,20 +3,6 @@
  */
 package com.zx.sms.codec.cmpp7F;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufUtil;
-import io.netty.buffer.Unpooled;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.MessageToMessageCodec;
-import io.netty.util.ReferenceCountUtil;
-
-import java.util.List;
-
-import org.marre.sms.SmsDcs;
-import org.marre.sms.SmsMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.zx.sms.codec.cmpp.msg.CmppDeliverRequestMessage;
 import com.zx.sms.codec.cmpp.msg.CmppDeliverResponseMessage;
 import com.zx.sms.codec.cmpp.msg.CmppReportRequestMessage;
@@ -32,6 +18,19 @@ import com.zx.sms.common.util.CMPPCommonUtil;
 import com.zx.sms.common.util.DefaultMsgIdUtil;
 import com.zx.sms.common.util.DefaultSequenceNumberUtil;
 import com.zx.sms.common.util.FstObjectSerializeUtil;
+import com.zx.sms.common.util.NettyByteBufUtil;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufUtil;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.MessageToMessageCodec;
+import io.netty.util.ReferenceCountUtil;
+import org.marre.sms.SmsDcs;
+import org.marre.sms.SmsMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 /**
  * @author huzorro(huzorro@gmail.com)
@@ -65,7 +64,7 @@ public class Cmpp7FDeliverRequestMessageCodec extends MessageToMessageCodec<Mess
 		CmppDeliverRequestMessage requestMessage = new CmppDeliverRequestMessage(msg.getHeader());
 
 		ByteBuf bodyBuffer = Unpooled.wrappedBuffer(msg.getBodyBuffer());
-		requestMessage.setMsgId(DefaultMsgIdUtil.bytes2MsgId(bodyBuffer.readBytes(CmppDeliverRequest.MSGID.getLength()).array()));
+		requestMessage.setMsgId(DefaultMsgIdUtil.bytes2MsgId(NettyByteBufUtil.readBytes(bodyBuffer, CmppDeliverRequest.MSGID.getLength())));
 		requestMessage.setDestId(bodyBuffer.readBytes(CmppDeliverRequest.DESTID.getLength()).toString(GlobalConstance.defaultTransportCharset).trim());
 		requestMessage.setServiceid(bodyBuffer.readBytes(CmppDeliverRequest.SERVICEID.getLength()).toString(GlobalConstance.defaultTransportCharset).trim());
 
@@ -88,7 +87,7 @@ public class Cmpp7FDeliverRequestMessageCodec extends MessageToMessageCodec<Mess
 			frame.setMsgLength((short)frameLength);
 		} else {
 			requestMessage.setReportRequestMessage(new CmppReportRequestMessage());
-			requestMessage.getReportRequestMessage().setMsgId(DefaultMsgIdUtil.bytes2MsgId(bodyBuffer.readBytes(CmppReportRequest.MSGID.getLength()).array()));
+			requestMessage.getReportRequestMessage().setMsgId(DefaultMsgIdUtil.bytes2MsgId(NettyByteBufUtil.readBytes(bodyBuffer, CmppReportRequest.MSGID.getLength())));
 			requestMessage.getReportRequestMessage().setStat(
 					bodyBuffer.readBytes(CmppReportRequest.STAT.getLength()).toString(GlobalConstance.defaultTransportCharset).trim());
 			requestMessage.getReportRequestMessage().setSubmitTime(

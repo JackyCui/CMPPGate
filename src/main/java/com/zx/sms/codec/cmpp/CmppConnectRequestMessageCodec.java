@@ -1,14 +1,5 @@
 package com.zx.sms.codec.cmpp;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.MessageToMessageCodec;
-import io.netty.util.ReferenceCountUtil;
-
-import java.util.List;
-
-import com.google.common.primitives.Bytes;
 import com.zx.sms.codec.cmpp.msg.CmppConnectRequestMessage;
 import com.zx.sms.codec.cmpp.msg.Message;
 import com.zx.sms.codec.cmpp.packet.CmppConnectRequest;
@@ -16,6 +7,14 @@ import com.zx.sms.codec.cmpp.packet.CmppPacketType;
 import com.zx.sms.codec.cmpp.packet.PacketType;
 import com.zx.sms.common.GlobalConstance;
 import com.zx.sms.common.util.CMPPCommonUtil;
+import com.zx.sms.common.util.NettyByteBufUtil;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.MessageToMessageCodec;
+import io.netty.util.ReferenceCountUtil;
+
+import java.util.List;
 
 /**
  *
@@ -47,7 +46,7 @@ public class CmppConnectRequestMessageCodec extends MessageToMessageCodec<Messag
 		ByteBuf bodyBuffer = Unpooled.wrappedBuffer(msg.getBodyBuffer());
 		requestMessage.setSourceAddr(bodyBuffer.readBytes(CmppConnectRequest.SOURCEADDR.getLength()).toString(GlobalConstance.defaultTransportCharset).trim());
 
-		requestMessage.setAuthenticatorSource(bodyBuffer.readBytes(CmppConnectRequest.AUTHENTICATORSOURCE.getLength()).array());
+		requestMessage.setAuthenticatorSource(NettyByteBufUtil.readBytes(bodyBuffer, CmppConnectRequest.AUTHENTICATORSOURCE.getLength()));
 
 		requestMessage.setVersion(bodyBuffer.readUnsignedByte());
 		requestMessage.setTimestamp(bodyBuffer.readUnsignedInt());

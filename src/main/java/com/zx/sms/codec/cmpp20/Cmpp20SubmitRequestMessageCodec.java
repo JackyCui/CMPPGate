@@ -3,21 +3,6 @@
  */
 package com.zx.sms.codec.cmpp20;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufUtil;
-import io.netty.buffer.Unpooled;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.MessageToMessageCodec;
-import io.netty.util.ReferenceCountUtil;
-
-import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
-import org.marre.sms.SmsDcs;
-import org.marre.sms.SmsMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.zx.sms.codec.cmpp.msg.CmppSubmitRequestMessage;
 import com.zx.sms.codec.cmpp.msg.CmppSubmitResponseMessage;
 import com.zx.sms.codec.cmpp.msg.LongMessageFrame;
@@ -31,6 +16,20 @@ import com.zx.sms.common.util.CMPPCommonUtil;
 import com.zx.sms.common.util.DefaultMsgIdUtil;
 import com.zx.sms.common.util.DefaultSequenceNumberUtil;
 import com.zx.sms.common.util.MsgId;
+import com.zx.sms.common.util.NettyByteBufUtil;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufUtil;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.MessageToMessageCodec;
+import io.netty.util.ReferenceCountUtil;
+import org.apache.commons.lang.StringUtils;
+import org.marre.sms.SmsDcs;
+import org.marre.sms.SmsMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 /**
  * shifei(shifei@asiainfo.com)
@@ -63,7 +62,7 @@ public class Cmpp20SubmitRequestMessageCodec extends MessageToMessageCodec<Messa
 
 		ByteBuf bodyBuffer = Unpooled.wrappedBuffer(msg.getBodyBuffer());
 
-		requestMessage.setMsgid(DefaultMsgIdUtil.bytes2MsgId(bodyBuffer.readBytes(Cmpp20SubmitRequest.MSGID.getLength()).array()));
+		requestMessage.setMsgid(DefaultMsgIdUtil.bytes2MsgId(NettyByteBufUtil.readBytes(bodyBuffer, Cmpp20SubmitRequest.MSGID.getLength())));
 		LongMessageFrame frame = new LongMessageFrame();
 
 		frame.setPktotal(bodyBuffer.readUnsignedByte());

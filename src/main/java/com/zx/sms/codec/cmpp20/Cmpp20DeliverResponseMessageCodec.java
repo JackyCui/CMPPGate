@@ -3,6 +3,13 @@
  */
 package com.zx.sms.codec.cmpp20;
 
+import com.zx.sms.codec.cmpp.msg.CmppDeliverResponseMessage;
+import com.zx.sms.codec.cmpp.msg.Message;
+import com.zx.sms.codec.cmpp.packet.PacketType;
+import com.zx.sms.codec.cmpp20.packet.Cmpp20DeliverResponse;
+import com.zx.sms.codec.cmpp20.packet.Cmpp20PacketType;
+import com.zx.sms.common.util.DefaultMsgIdUtil;
+import com.zx.sms.common.util.NettyByteBufUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
@@ -10,14 +17,6 @@ import io.netty.handler.codec.MessageToMessageCodec;
 import io.netty.util.ReferenceCountUtil;
 
 import java.util.List;
-
-import com.zx.sms.codec.cmpp.msg.CmppDeliverResponseMessage;
-import com.zx.sms.codec.cmpp.msg.Message;
-import com.zx.sms.codec.cmpp.packet.CmppDeliverResponse;
-import com.zx.sms.codec.cmpp.packet.PacketType;
-import com.zx.sms.codec.cmpp20.packet.Cmpp20DeliverResponse;
-import com.zx.sms.codec.cmpp20.packet.Cmpp20PacketType;
-import com.zx.sms.common.util.DefaultMsgIdUtil;
 
 /**
  * shifei(shifei@asiainfo.com)
@@ -68,9 +67,7 @@ public class Cmpp20DeliverResponseMessageCodec extends MessageToMessageCodec<Mes
         
         ByteBuf bodyBuffer = Unpooled.wrappedBuffer(msg.getBodyBuffer());
         
-		responseMessage.setMsgId(DefaultMsgIdUtil.bytes2MsgId(bodyBuffer
-				.readBytes(Cmpp20DeliverResponse.MSGID.getLength())
-				.array()));
+		responseMessage.setMsgId(DefaultMsgIdUtil.bytes2MsgId(NettyByteBufUtil.readBytes(bodyBuffer, Cmpp20DeliverResponse.MSGID.getLength())));
 		responseMessage.setResult(bodyBuffer.readUnsignedByte());
 		
 		ReferenceCountUtil.release(bodyBuffer);
