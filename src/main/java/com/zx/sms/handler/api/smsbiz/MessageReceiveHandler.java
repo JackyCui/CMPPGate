@@ -1,15 +1,6 @@
 package com.zx.sms.handler.api.smsbiz;
 
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.util.concurrent.Future;
-
-import java.util.concurrent.Callable;
-import java.util.concurrent.atomic.AtomicLong;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.zx.sms.codec.cmpp.msg.CmppConnectResponseMessage;
 import com.zx.sms.codec.cmpp.msg.CmppDeliverRequestMessage;
 import com.zx.sms.codec.cmpp.msg.CmppDeliverResponseMessage;
 import com.zx.sms.codec.cmpp.msg.CmppSubmitRequestMessage;
@@ -18,6 +9,14 @@ import com.zx.sms.connect.manager.EventLoopGroupFactory;
 import com.zx.sms.connect.manager.ExitUnlimitCirclePolicy;
 import com.zx.sms.handler.api.AbstractBusinessHandler;
 import com.zx.sms.session.cmpp.SessionState;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.util.concurrent.Future;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.Callable;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class MessageReceiveHandler extends AbstractBusinessHandler {
 	private static final Logger logger = LoggerFactory.getLogger(MessageReceiveHandler.class);
@@ -58,6 +57,7 @@ public class MessageReceiveHandler extends AbstractBusinessHandler {
 
 		if (msg instanceof CmppDeliverRequestMessage) {
 			CmppDeliverRequestMessage e = (CmppDeliverRequestMessage) msg;
+			logger.info(e.toString());
 			CmppDeliverResponseMessage responseMessage = new CmppDeliverResponseMessage(e.getHeader().getSequenceId());
 			responseMessage.setMsgId(e.getMsgId());
 			responseMessage.setResult(0);
@@ -66,9 +66,11 @@ public class MessageReceiveHandler extends AbstractBusinessHandler {
 
 		} else if (msg instanceof CmppDeliverResponseMessage) {
 			CmppDeliverResponseMessage e = (CmppDeliverResponseMessage) msg;
+			logger.info(e.toString());
 
 		} else if (msg instanceof CmppSubmitRequestMessage) {
 			CmppSubmitRequestMessage e = (CmppSubmitRequestMessage) msg;
+			logger.info(e.toString());
 			CmppSubmitResponseMessage resp = new CmppSubmitResponseMessage(e.getHeader().getSequenceId());
 			resp.setMsgId(e.getMsgid());
 			resp.setResult(0);
@@ -76,6 +78,10 @@ public class MessageReceiveHandler extends AbstractBusinessHandler {
 			cnt.incrementAndGet();
 		} else if (msg instanceof CmppSubmitResponseMessage) {
 			CmppSubmitResponseMessage e = (CmppSubmitResponseMessage) msg;
+			logger.info(e.toString());
+		} else if (msg instanceof CmppConnectResponseMessage) {
+			CmppConnectResponseMessage e = (CmppConnectResponseMessage) msg;
+			logger.info(e.toString());
 		} else {
 			ctx.fireChannelRead(msg);
 		}

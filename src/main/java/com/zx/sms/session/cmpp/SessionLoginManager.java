@@ -1,20 +1,5 @@
 package com.zx.sms.session.cmpp;
 
-import io.netty.channel.ChannelDuplexHandler;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.GenericFutureListener;
-
-import java.net.InetSocketAddress;
-import java.util.Arrays;
-
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateFormatUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
 import com.zx.sms.codec.cmpp.msg.CmppConnectRequestMessage;
@@ -29,6 +14,19 @@ import com.zx.sms.connect.manager.cmpp.CMPPCodecChannelInitializer;
 import com.zx.sms.connect.manager.cmpp.CMPPEndpointEntity;
 import com.zx.sms.connect.manager.cmpp.CMPPServerChildEndpointEntity;
 import com.zx.sms.connect.manager.cmpp.CMPPServerEndpointEntity;
+import io.netty.channel.ChannelDuplexHandler;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateFormatUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.net.InetSocketAddress;
+import java.util.Arrays;
 
 /**
  * 处理客户端或者服务端登陆，密码校验。协议协商 建立连接前，不会启动消息重试和消息可靠性保证
@@ -125,6 +123,7 @@ public class SessionLoginManager extends ChannelDuplexHandler {
 				byte[] timestampBytes = timestamp.getBytes(GlobalConstance.defaultTransportCharset);
 				req.setAuthenticatorSource(DigestUtils.md5(Bytes.concat(userBytes, new byte[9], passwdBytes, timestampBytes)));
 				req.setVersion(cliententity.getVersion());
+				logger.info(req.toString());
 				ctx.channel().writeAndFlush(req);
 				logger.info("session Start :Send CmppConnectRequestMessage seq :{}", req.getHeader().getSequenceId());
 			}

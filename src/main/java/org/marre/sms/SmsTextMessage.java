@@ -34,11 +34,11 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms;
 
-import java.io.Serializable;
-
+import com.zx.sms.common.util.CMPPCommonUtil;
 import org.apache.commons.lang.StringUtils;
 
-import com.zx.sms.common.util.CMPPCommonUtil;
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * Represents a text message.
@@ -93,7 +93,9 @@ public class SmsTextMessage extends SmsConcatMessage implements Serializable
     	else
     		 setText(msg, SmsDcs.getGeneralDataCodingDcs(SmsAlphabet.ASCII, SmsMsgClass.CLASS_UNKNOWN));
     }
-    
+     public static void main (String[] args) {
+        System.out.println (haswidthChar("status#-" + LocalDateTime.now()));
+     }
     /**
      * Returns the text message. 
      */

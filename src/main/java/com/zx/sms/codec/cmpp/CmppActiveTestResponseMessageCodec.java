@@ -3,19 +3,20 @@
  */
 package com.zx.sms.codec.cmpp;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.MessageToMessageCodec;
-import io.netty.util.ReferenceCountUtil;
-
-import java.util.List;
-
 import com.zx.sms.codec.cmpp.msg.CmppActiveTestResponseMessage;
 import com.zx.sms.codec.cmpp.msg.Message;
 import com.zx.sms.codec.cmpp.packet.CmppActiveTestResponse;
 import com.zx.sms.codec.cmpp.packet.CmppPacketType;
 import com.zx.sms.codec.cmpp.packet.PacketType;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.MessageToMessageCodec;
+import io.netty.util.ReferenceCountUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 /**
  * @author huzorro(huzorro@gmail.com)
@@ -24,6 +25,8 @@ import com.zx.sms.codec.cmpp.packet.PacketType;
  */
 public class CmppActiveTestResponseMessageCodec extends MessageToMessageCodec<Message, CmppActiveTestResponseMessage> {
 	private PacketType packetType;
+
+	private Logger logger = LoggerFactory.getLogger(CmppActiveTestResponseMessageCodec.class);
 	
 	public CmppActiveTestResponseMessageCodec() {
 		this(CmppPacketType.CMPPACTIVETESTRESPONSE);
@@ -48,6 +51,7 @@ public class CmppActiveTestResponseMessageCodec extends MessageToMessageCodec<Me
 		ByteBuf  bodyBuffer = Unpooled.wrappedBuffer(msg.getBodyBuffer());
 		responseMessage.setReserved(bodyBuffer.readByte());
 		ReferenceCountUtil.release(bodyBuffer);
+		logger.info(responseMessage.toString());
 		out.add(responseMessage);
 	}
 

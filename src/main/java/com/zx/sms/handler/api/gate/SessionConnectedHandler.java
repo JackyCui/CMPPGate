@@ -1,26 +1,8 @@
 package com.zx.sms.handler.api.gate;
 
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.GenericFutureListener;
-
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
-
-import org.apache.commons.lang.math.RandomUtils;
-import org.marre.wap.push.SmsMmsNotificationMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.zx.sms.codec.cmpp.msg.CmppDeliverRequestMessage;
 import com.zx.sms.codec.cmpp.msg.CmppReportRequestMessage;
 import com.zx.sms.codec.cmpp.msg.CmppSubmitRequestMessage;
-import com.zx.sms.codec.cmpp.msg.CmppTerminateRequestMessage;
 import com.zx.sms.codec.cmpp.msg.Message;
 import com.zx.sms.common.util.ChannelUtil;
 import com.zx.sms.common.util.MsgId;
@@ -30,6 +12,21 @@ import com.zx.sms.connect.manager.ServerEndpoint;
 import com.zx.sms.connect.manager.cmpp.CMPPEndpointEntity;
 import com.zx.sms.handler.api.AbstractBusinessHandler;
 import com.zx.sms.session.cmpp.SessionState;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
+import org.apache.commons.lang.math.RandomUtils;
+import org.marre.wap.push.SmsMmsNotificationMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.Callable;
 
 /**
  * 
@@ -39,7 +36,7 @@ import com.zx.sms.session.cmpp.SessionState;
 public class SessionConnectedHandler extends AbstractBusinessHandler {
 	private static final Logger logger = LoggerFactory.getLogger(SessionConnectedHandler.class);
 
-	private int totleCnt = 200000;
+	private int totleCnt = 1;
 
 
 	private int failcnt = 0;
@@ -95,14 +92,16 @@ public class SessionConnectedHandler extends AbstractBusinessHandler {
 						return msg;
 					} else {
 						CmppSubmitRequestMessage msg = new CmppSubmitRequestMessage();
-						msg.setDestterminalId(String.valueOf(System.nanoTime()));
-						msg.setLinkID("0000");
-						msg.setMsgContent(sb.toString());
+						msg.setDestterminalId("1064802109979");
+//						msg.setLinkID("0000");
+						msg.setMsgContent("status#" + LocalDateTime.now());
 						msg.setMsgid(new MsgId());
-						msg.setServiceId("10086");
-						msg.setSrcId("10086");
-						msg.setAttachment((Serializable)map);
-						msg.setMsgContent(new SmsMmsNotificationMessage("http://www.baidu.com/abc/sfd",50*1024));
+						msg.setServiceId("gmsy");
+						msg.setSrcId("1064899080180");
+//						msg.setAttachment((Serializable)map);
+						msg.setRegisteredDelivery((short) 1);
+//						msg.setMsgContent(new SmsMmsNotificationMessage("http://www.baidu.com/abc/sfd",50*1024));
+						logger.info(msg.toString());
 						return msg;
 					}
 				}
@@ -132,18 +131,7 @@ public class SessionConnectedHandler extends AbstractBusinessHandler {
 			}, new ExitUnlimitCirclePolicy() {
 				@Override
 				public boolean notOver(Future future) {
-					boolean ret = ch.isActive() && totleCnt > 0;
-					if(!ret){
-						
-						ChannelFuture promise =	ch.writeAndFlush(new CmppTerminateRequestMessage());
-						promise.addListener(new GenericFutureListener<ChannelFuture>(){
-							@Override
-							public void operationComplete(ChannelFuture future) throws Exception {
-								ch.close();
-							}
-						});
-					}
-					return ret;
+					return false;
 				}
 			},1);
 		}

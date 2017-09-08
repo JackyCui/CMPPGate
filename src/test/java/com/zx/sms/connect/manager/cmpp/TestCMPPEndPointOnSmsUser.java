@@ -1,18 +1,17 @@
 package com.zx.sms.connect.manager.cmpp;
 
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.locks.LockSupport;
-
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.zx.sms.connect.manager.CMPPEndpointManager;
 import com.zx.sms.handler.api.BusinessHandlerInterface;
 import com.zx.sms.handler.api.gate.SessionConnectedHandler;
 import com.zx.sms.handler.api.smsbiz.MessageReceiveHandler;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.locks.LockSupport;
 /**
  *经测试，35个连接，每个连接每200/s条消息
  *lenovoX250能承担7000/s消息编码解析无压力。
@@ -33,13 +32,12 @@ public class TestCMPPEndPointOnSmsUser {
 	
 		CMPPClientEndpointEntity client = new CMPPClientEndpointEntity();
 		client.setId("client");
-//		client.setHost("42.96.185.95");
-		client.setHost("127.0.0.1");
-		client.setPort(7890);
+		client.setHost("139.196.80.180");
+		client.setPort(17890);
 		client.setChartset(Charset.forName("utf-8"));
-		client.setGroupName("test");
-		client.setUserName("400437");
-		client.setPassword("400437");
+		client.setGroupName("gmsy");
+		client.setUserName("080180");
+		client.setPassword("080180");
 		client.setWindows((short)16);
 		client.setVersion((short)48);
 		client.setRetryWaitTimeSec((short)10);
@@ -47,7 +45,7 @@ public class TestCMPPEndPointOnSmsUser {
 		
 		List<BusinessHandlerInterface> clienthandlers = new ArrayList<BusinessHandlerInterface>();
 		clienthandlers.add(new MessageReceiveHandler());
-//		clienthandlers.add(new SessionConnectedHandler());
+		clienthandlers.add(new SessionConnectedHandler());
 		client.setBusinessHandlerSet(clienthandlers);
 		manager.addEndpointEntity(client);
 
